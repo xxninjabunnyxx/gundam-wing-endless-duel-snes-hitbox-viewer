@@ -2,7 +2,7 @@ memory.usememorydomain('WRAM')
 
 local time = { address = 0x00060C; max = 153 }
 
-local player_1 ={
+local player_1 = {
     health = { address = 0x001B71; max = 112};
     meter = { address = 0x001B80; max = 300 }
 }
