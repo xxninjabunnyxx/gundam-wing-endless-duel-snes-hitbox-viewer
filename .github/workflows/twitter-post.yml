@@ -2,7 +2,7 @@ name: Post a Tweet
 on:
   push:
     branches:
-      - master
+      - main
 jobs:
   tweet:
     runs-on: ubuntu-latest
