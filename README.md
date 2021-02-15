@@ -28,5 +28,3 @@
 [ ] set player 2 block follow ups
 
 [ ] screen overlay
-
-ko_fi: xxninjabunnyxx
