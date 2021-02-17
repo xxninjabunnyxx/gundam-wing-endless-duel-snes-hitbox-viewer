@@ -1,3 +1,5 @@
+memory.usememorydomain('WRAM')
+
 local module = {}
 
 module.time = { address = 0x00060C; max = 153 }
