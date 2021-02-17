@@ -1,73 +1,57 @@
 memory.usememorydomain('WRAM')
 local state = require("lib.state")
+local utilities = require("lib.utilities")
 
-function check_timers()
-    ref_time = 50
-    if state.timers.main_overlay == ref_time then
-        state.flags.main_overlay = not state.flags.main_overlay
-        state.timers.main_overlay = 0
-    end
-end
 
-function noop()
-end
-
-function table_has_key(table, key)
-    if table[key] ~= nil then
-        return true
-    else
-        return false
-    end
-end
 
 menu = {
     [1] = { text = "Player 1"; skip = true };
     [2] = { text = "Health"; skip = false; state = 1; max_state = 3; options = {
-        [1] = {text = " Normal >";  callback=noop};
-        [2] = {text = "< Refill >";  callback=noop};
-        [3] = {text = "< Infinate";  callback=noop}
+        [1] = {text = " Normal >";  callback = utilities.noop };
+        [2] = {text = "< Refill >";  callback = utilities.noop };
+        [3] = {text = "< Infinate";  callback = utilities.noop }
     }};
     [3] = { text = "Meter"; skip = false; state = 1; max_state = 3; options = {
-        [1] = {text = " Normal >";  callback=noop};
-        [2] = {text = "< Refill >";  callback=noop};
-        [3] = {text = "< Infinate";  callback=noop}
+        [1] = {text = " Normal >";  callback = utilities.noop };
+        [2] = {text = "< Refill >";  callback = utilities.noop };
+        [3] = {text = "< Infinate";  callback = utilities.noop }
     }};
     [4] = { text = "State"; skip = false; state = 1; max_state = 3; options = {
-        [1] = {text = " Standing >";  callback=noop};
-        [2] = {text = "< Crouching >";  callback=noop};
-        [3] = {text = "< Jumping";  callback=noop}
+        [1] = {text = " Standing >";  callback = utilities.noop };
+        [2] = {text = "< Crouching >";  callback = utilities.noop };
+        [3] = {text = "< Jumping";  callback = utilities.noop }
     }};
     [5] = { text = "Blocking"; skip = false; state = 1; max_state = 3; options = {
-        [1] = {text = " None >";  callback=noop};
-        [2] = {text = "< Auto >";  callback=noop};
-        [3] = {text = "< Follow Up";  callback=noop}
+        [1] = {text = " None >";  callback = utilities.noop };
+        [2] = {text = "< Auto >";  callback = utilities.noop };
+        [3] = {text = "< Follow Up";  callback = utilities.noop }
     }};
     [6] = { text = ""; skip = true};
     [7] = { text = "Player 2"; skip = true };
     [8] = { text = "Health"; skip = false; state = 1; max_state = 3; options = {
-        [1] = {text = " Normal >";  callback=noop};
-        [2] = {text = "< Refill >";  callback=noop};
-        [3] = {text = "< Infinate";  callback=noop}
+        [1] = {text = " Normal >";  callback = utilities.noop };
+        [2] = {text = "< Refill >";  callback = utilities.noop };
+        [3] = {text = "< Infinate";  callback = utilities.noop }
     }};
     [9] = { text = "Meter"; skip = false; state = 1; max_state = 3; options = {
-        [1] = {text = " Normal >";  callback=noop};
-        [2] = {text = "< Refill >";  callback=noop};
-        [3] = {text = "< Infinate";  callback=noop}
+        [1] = {text = " Normal >";  callback = utilities.noop };
+        [2] = {text = "< Refill >";  callback = utilities.noop };
+        [3] = {text = "< Infinate";  callback = utilities.noop }
     }};
     [10] = { text = "State"; skip = false; state = 1; max_state = 3; options = {
-        [1] = {text = " Standing >";  callback=noop};
-        [2] = {text = "< Crouching >";  callback=noop};
-        [3] = {text = "< Jumping";  callback=noop}
+        [1] = {text = " Standing >";  callback = utilities.noop };
+        [2] = {text = "< Crouching >";  callback = utilities.noop };
+        [3] = {text = "< Jumping";  callback = utilities.noop }
     }};
     [11] = { text = "Blocking"; skip = false; state = 1; max_state = 3; options = {
-        [1] = {text = " None >";  callback=noop};
-        [2] = {text = "< Auto >";  callback=noop};
-        [3] = {text = "< Follow Up";  callback=noop}
+        [1] = {text = " None >";  callback = utilities.noop };
+        [2] = {text = "< Auto >";  callback = utilities.noop };
+        [3] = {text = "< Follow Up";  callback = utilities.noop }
     }};
     [12] = { text = ""; skip = true };
     [13] = { text = "Time"; skip = false; state = 1; max_state = 2; options = {
-        [1] = { text = " Normal >";  callback=noop};
-        [2] = { text = "< Infinate";  callback=noop}
+        [1] = { text = " Normal >";  callback = utilities.noop };
+        [2] = { text = "< Infinate";  callback = utilities.infinite(state.time.address, state.time.max) }
     }};
 }
 
@@ -78,7 +62,7 @@ function main_overlay()
     line_space = 0
 
     for key, value in ipairs(menu) do
-        if table_has_key(value, "options") == true then
+        if  utilities.table_has_key(value, "options") == true then
             menu_text = value["text"] .. " " .. value["options"][value.state]["text"]
         else
             menu_text = value["text"]
@@ -87,7 +71,7 @@ function main_overlay()
         if key == state.flags.menu_state and value["skip"] == false then
             gui.drawText(0, line_space, ">" .. menu_text, "white", "Black")
 
-            if table_has_key(value, "state") == true and table_has_key(value, "max_state") == true then
+            if  utilities.table_has_key(value, "state") == true and  utilities.table_has_key(value, "max_state") == true then
                 if inputs["P1 Right"] == true and state.timers.sub_menu_delay >= ref_time then
                     value.state = value.state + 1
                     state.timers.sub_menu_delay = 0
@@ -110,6 +94,9 @@ function main_overlay()
                     value.state = 1
                 end
             end
+
+            value["options"][value.state]["callback"]()
+
         elseif key == state.flags.menu_state and value["skip"] == true then
             gui.drawText(0, line_space, "-" .. menu_text, "white", "Black")
         else
@@ -149,12 +136,11 @@ while true do
         state.timers.main_overlay = state.timers.main_overlay + 1
     end
 
-    check_timers()
+    utilities.check_timers()
 
     if state.flags.main_overlay == true then
         main_overlay()
     end
 
-    memory.writebyte(state.time.address, state.time.max)
     emu.frameadvance()
 end
