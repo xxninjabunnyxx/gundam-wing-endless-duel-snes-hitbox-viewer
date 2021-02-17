@@ -1,56 +1,56 @@
 local module = {}
 
-local state = require("state")
-local helpers = require("helpers")
+local state = require("lib.state")
+local helpers = require("lib.utils")
 
 local menu = {
     [1] = { text = "Player 1"; skip = true };
     [2] = { text = "Health"; skip = false; state = 1; max_state = 3; options = {
-        [1] = {text = " Normal >";  callback = helpers.noop };
-        [2] = {text = "< Refill >";  callback = helpers.noop };
-        [3] = {text = "< Infinate";  callback = helpers.infinite(state.player_1.health.address, state.player_1.health.max, state.player_1.health.size) }
+        [1] = {text = " Normal >";  callback = utils.noop };
+        [2] = {text = "< Refill >";  callback = utils.noop };
+        [3] = {text = "< Infinate";  callback = utils.infinite(state.player_1.health.address, state.player_1.health.max, state.player_1.health.size) }
     }};
     [3] = { text = "Meter"; skip = false; state = 1; max_state = 3; options = {
-        [1] = {text = " Normal >";  callback = helpers.noop };
-        [2] = {text = "< Refill >";  callback = helpers.noop };
-        [3] = {text = "< Infinate";  callback = helpers.infinite(state.player_1.meter.address, state.player_1.meter.max, state.player_1.meter.size) }
+        [1] = {text = " Normal >";  callback = utils.noop };
+        [2] = {text = "< Refill >";  callback = utils.noop };
+        [3] = {text = "< Infinate";  callback = utils.infinite(state.player_1.meter.address, state.player_1.meter.max, state.player_1.meter.size) }
     }};
     [4] = { text = "State"; skip = false; state = 1; max_state = 3; options = {
-        [1] = {text = " Standing >";  callback = helpers.noop };
-        [2] = {text = "< Crouching >";  callback = helpers.noop };
-        [3] = {text = "< Jumping";  callback = helpers.noop }
+        [1] = {text = " Standing >";  callback = utils.noop };
+        [2] = {text = "< Crouching >";  callback = utils.noop };
+        [3] = {text = "< Jumping";  callback = utils.noop }
     }};
     [5] = { text = "Blocking"; skip = false; state = 1; max_state = 3; options = {
-        [1] = {text = " None >";  callback = helpers.noop };
-        [2] = {text = "< Auto >";  callback = helpers.noop };
-        [3] = {text = "< Follow Up";  callback = helpers.noop }
+        [1] = {text = " None >";  callback = utils.noop };
+        [2] = {text = "< Auto >";  callback = utils.noop };
+        [3] = {text = "< Follow Up";  callback = utils.noop }
     }};
     [6] = { text = ""; skip = true};
     [7] = { text = "Player 2"; skip = true };
     [8] = { text = "Health"; skip = false; state = 1; max_state = 3; options = {
-        [1] = {text = " Normal >";  callback = helpers.noop };
-        [2] = {text = "< Refill >";  callback = helpers.noop };
-        [3] = {text = "< Infinate";  callback = helpers.infinite(state.player_2.health.address, state.player_2.health.max, state.player_2.health.size) }
+        [1] = {text = " Normal >";  callback = utils.noop };
+        [2] = {text = "< Refill >";  callback = utils.noop };
+        [3] = {text = "< Infinate";  callback = utils.infinite(state.player_2.health.address, state.player_2.health.max, state.player_2.health.size) }
     }};
     [9] = { text = "Meter"; skip = false; state = 1; max_state = 3; options = {
-        [1] = {text = " Normal >";  callback = helpers.noop };
-        [2] = {text = "< Refill >";  callback = helpers.noop };
-        [3] = {text = "< Infinate";  callback = helpers.infinite(state.player_2.meter.address, state.player_2.meter.max, state.player_2.meter.size) }
+        [1] = {text = " Normal >";  callback = utils.noop };
+        [2] = {text = "< Refill >";  callback = utils.noop };
+        [3] = {text = "< Infinate";  callback = utils.infinite(state.player_2.meter.address, state.player_2.meter.max, state.player_2.meter.size) }
     }};
     [10] = { text = "State"; skip = false; state = 1; max_state = 3; options = {
-        [1] = {text = " Standing >";  callback = helpers.noop };
-        [2] = {text = "< Crouching >";  callback = helpers.noop };
-        [3] = {text = "< Jumping";  callback = helpers.noop }
+        [1] = {text = " Standing >";  callback = utils.noop };
+        [2] = {text = "< Crouching >";  callback = utils.noop };
+        [3] = {text = "< Jumping";  callback = utils.noop }
     }};
     [11] = { text = "Blocking"; skip = false; state = 1; max_state = 3; options = {
-        [1] = {text = " None >";  callback = helpers.noop };
-        [2] = {text = "< Auto >";  callback = helpers.noop };
-        [3] = {text = "< Follow Up";  callback = helpers.noop }
+        [1] = {text = " None >";  callback = utils.noop };
+        [2] = {text = "< Auto >";  callback = utils.noop };
+        [3] = {text = "< Follow Up";  callback = utils.noop }
     }};
     [12] = { text = ""; skip = true };
     [13] = { text = "Time"; skip = false; state = 1; max_state = 2; options = {
-        [1] = { text = " Normal >";  callback = helpers.noop };
-        [2] = { text = "< Infinate";  callback = helpers.infinite(state.time.address, state.time.max, state.time.size) }
+        [1] = { text = " Normal >";  callback = utils.noop };
+        [2] = { text = "< Infinate";  callback = utils.infinite(state.time.address, state.time.max, state.time.size) }
     }};
 }
 
@@ -69,7 +69,7 @@ function module.overlay()
     line_space = 0
 
     for key, value in ipairs(menu) do
-        if  helpers.table_has_key(value, "options") == true then
+        if  utils.table_has_key(value, "options") == true then
             menu_text = value["text"] .. " " .. value["options"][value.state]["text"]
         else
             menu_text = value["text"]
@@ -78,7 +78,7 @@ function module.overlay()
         if key == state.flags.menu_state and value["skip"] == false then
             gui.drawText(0, line_space, ">" .. menu_text, "white", "Black")
 
-            if  helpers.table_has_key(value, "state") == true and  helpers.table_has_key(value, "max_state") == true then
+            if  utils.table_has_key(value, "state") == true and  utils.table_has_key(value, "max_state") == true then
                 if inputs["P1 Right"] == true and state.timers.sub_menu_delay >= ref_time then
                     value.state = value.state + 1
                     state.timers.sub_menu_delay = 0

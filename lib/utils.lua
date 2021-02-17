@@ -1,4 +1,4 @@
-local state = require("state")
+local state = require("lib.state")
 
 local module = {}
 
