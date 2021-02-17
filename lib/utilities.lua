@@ -1,3 +1,5 @@
+local state = require("state")
+
 local module = {}
 
 function module.infinite(address, max)
