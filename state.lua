@@ -2,16 +2,16 @@ memory.usememorydomain('WRAM')
 
 local module = {}
 
-module.time = { address = 0x00060C; max = 153 }
+module.time = { address = 0x00060C; max = 153; size = 1 }
 
 module.player_1 = {
-    health = { address = 0x001B71; max = 112};
-    meter = { address = 0x001B80; max = 300 }
+    health = { address = 0x001B71; max = 112; size = 1 };
+    meter = { address = 0x001B80; max = 300; size = 2 }
 }
 
 module.player_2 = {
-    health = { address = 0x001B75; max = 112};
-    meter = { address = 0x001B84; max = 300 }
+    health = { address = 0x001B75; max = 112; size = 1 };
+    meter = { address = 0x001B84; max = 300; size = 2 }
 }
 
 module.timers = {

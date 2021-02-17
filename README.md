@@ -1,7 +1,7 @@
 # gundam-wing-endless-dual-trining mode
  Bizhawk training mode for Gundam Wing: Endless Dual
 
- - [ ] freeze time
+ - [X] freeze time
  - [ ] freeze player 1 health
  - [ ] freeze player 2 health
  - [ ] freeze player 1 meter

@@ -8,12 +8,12 @@ local menu = {
     [2] = { text = "Health"; skip = false; state = 1; max_state = 3; options = {
         [1] = {text = " Normal >";  callback = helpers.noop };
         [2] = {text = "< Refill >";  callback = helpers.noop };
-        [3] = {text = "< Infinate";  callback = helpers.noop }
+        [3] = {text = "< Infinate";  callback = helpers.infinite(state.player_1.health.address, state.player_1.health.max, state.player_1.health.size) }
     }};
     [3] = { text = "Meter"; skip = false; state = 1; max_state = 3; options = {
         [1] = {text = " Normal >";  callback = helpers.noop };
         [2] = {text = "< Refill >";  callback = helpers.noop };
-        [3] = {text = "< Infinate";  callback = helpers.noop }
+        [3] = {text = "< Infinate";  callback = helpers.infinite(state.player_1.meter.address, state.player_1.meter.max, state.player_1.meter.size) }
     }};
     [4] = { text = "State"; skip = false; state = 1; max_state = 3; options = {
         [1] = {text = " Standing >";  callback = helpers.noop };
@@ -30,12 +30,12 @@ local menu = {
     [8] = { text = "Health"; skip = false; state = 1; max_state = 3; options = {
         [1] = {text = " Normal >";  callback = helpers.noop };
         [2] = {text = "< Refill >";  callback = helpers.noop };
-        [3] = {text = "< Infinate";  callback = helpers.noop }
+        [3] = {text = "< Infinate";  callback = helpers.infinite(state.player_2.health.address, state.player_2.health.max, state.player_2.health.size) }
     }};
     [9] = { text = "Meter"; skip = false; state = 1; max_state = 3; options = {
         [1] = {text = " Normal >";  callback = helpers.noop };
         [2] = {text = "< Refill >";  callback = helpers.noop };
-        [3] = {text = "< Infinate";  callback = helpers.noop }
+        [3] = {text = "< Infinate";  callback = helpers.infinite(state.player_2.meter.address, state.player_2.meter.max, state.player_2.meter.size) }
     }};
     [10] = { text = "State"; skip = false; state = 1; max_state = 3; options = {
         [1] = {text = " Standing >";  callback = helpers.noop };
@@ -50,7 +50,7 @@ local menu = {
     [12] = { text = ""; skip = true };
     [13] = { text = "Time"; skip = false; state = 1; max_state = 2; options = {
         [1] = { text = " Normal >";  callback = helpers.noop };
-        [2] = { text = "< Infinate";  callback = helpers.infinite(state.time.address, state.time.max) }
+        [2] = { text = "< Infinate";  callback = helpers.infinite(state.time.address, state.time.max, state.time.size) }
     }};
 }
 
