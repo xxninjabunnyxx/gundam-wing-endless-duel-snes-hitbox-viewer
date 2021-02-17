@@ -1,6 +1,6 @@
 local state = require("state")
 local helpers = require("helpers")
-local menu = require("overlay")
+local menu = require("menu")
 
 while true do
     local inputs = joypad.get()
@@ -14,6 +14,7 @@ while true do
     if state.flags.main_overlay == true then
         menu.overlay()
     end
-
+    
+    menu.run_callbacks()
     emu.frameadvance()
 end
