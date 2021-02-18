@@ -17,7 +17,7 @@
  - [ ] set player 1 crouching state
  - [ ] set player 1 standing state
  - [ ] set player 1 jumping state
- - [ ] set player 1 crouching state
- - [ ] set player 1 standing state
- - [ ] set player 1 jumping state
+ - [ ] set player 2 crouching state
+ - [ ] set player 2 standing state
+ - [ ] set player 2 jumping state
  - [X] screen overlay
