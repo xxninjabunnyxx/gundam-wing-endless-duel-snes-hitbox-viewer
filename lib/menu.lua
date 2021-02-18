@@ -15,40 +15,30 @@ local menu = {
         [2] = {text = "< Refill >";  callback = utils.noop };
         [3] = {text = "< Infinate";  callback = utils.infinite(state.player_1.meter.address, state.player_1.meter.max, state.player_1.meter.size) }
     }};
-    [4] = { text = "State"; skip = false; state = 1; max_state = 3; options = {
-        [1] = {text = " Standing >";  callback = utils.noop };
-        [2] = {text = "< Crouching >";  callback = utils.noop };
-        [3] = {text = "< Jumping";  callback = utils.noop }
-    }};
-    [5] = { text = "Blocking"; skip = false; state = 1; max_state = 3; options = {
-        [1] = {text = " None >";  callback = utils.noop };
-        [2] = {text = "< Auto >";  callback = utils.noop };
-        [3] = {text = "< Follow Up";  callback = utils.noop }
-    }};
-    [6] = { text = ""; skip = true};
-    [7] = { text = "Player 2"; skip = true };
-    [8] = { text = "Health"; skip = false; state = 1; max_state = 3; options = {
+    [4] = { text = ""; skip = true};
+    [5] = { text = "Player 2"; skip = true };
+    [6] = { text = "Health"; skip = false; state = 1; max_state = 3; options = {
         [1] = {text = " Normal >";  callback = utils.noop };
         [2] = {text = "< Refill >";  callback = utils.noop };
         [3] = {text = "< Infinate";  callback = utils.infinite(state.player_2.health.address, state.player_2.health.max, state.player_2.health.size) }
     }};
-    [9] = { text = "Meter"; skip = false; state = 1; max_state = 3; options = {
+    [7] = { text = "Meter"; skip = false; state = 1; max_state = 3; options = {
         [1] = {text = " Normal >";  callback = utils.noop };
         [2] = {text = "< Refill >";  callback = utils.noop };
         [3] = {text = "< Infinate";  callback = utils.infinite(state.player_2.meter.address, state.player_2.meter.max, state.player_2.meter.size) }
     }};
-    [10] = { text = "State"; skip = false; state = 1; max_state = 3; options = {
+    [8] = { text = "State"; skip = false; state = 1; max_state = 3; options = {
         [1] = {text = " Standing >";  callback = utils.noop };
         [2] = {text = "< Crouching >";  callback = utils.noop };
         [3] = {text = "< Jumping";  callback = utils.noop }
     }};
-    [11] = { text = "Blocking"; skip = false; state = 1; max_state = 3; options = {
+    [9] = { text = "Blocking"; skip = false; state = 1; max_state = 3; options = {
         [1] = {text = " None >";  callback = utils.noop };
         [2] = {text = "< Auto >";  callback = utils.noop };
         [3] = {text = "< Follow Up";  callback = utils.noop }
     }};
-    [12] = { text = ""; skip = true };
-    [13] = { text = "Time"; skip = false; state = 1; max_state = 2; options = {
+    [10] = { text = ""; skip = true };
+    [11] = { text = "Time"; skip = false; state = 1; max_state = 2; options = {
         [1] = { text = " Normal >";  callback = utils.noop };
         [2] = { text = "< Infinate";  callback = utils.infinite(state.time.address, state.time.max, state.time.size) }
     }};
