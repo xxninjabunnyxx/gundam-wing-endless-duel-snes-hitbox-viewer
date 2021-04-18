@@ -1,20 +1,201 @@
-local state = require("lib.state")
-local utils = require("lib.utils")
-local menu = require("lib.menu")
+memory.usememorydomain('WRAM')
+
+local state = {
+    time = {
+        address = 0x00060C,
+        max = 153
+    },
+    
+    player_1 = {
+        health = {
+            address = 0x001B71,
+            max = 112
+        },
+        
+        meter = {
+            address = 0x001B80,
+            max = 300
+        }
+    },
+    
+    player_2 = {
+        health = {
+            address = 0x001B75,
+            max = 112
+        },
+        meter = {
+            address = 0x001B84,
+            max = 300
+        }
+    },
+
+    timers = {
+        overlay = 0,
+        menu_delay = 0,
+        sub_menu_delay = 0
+    },
+    
+    flags = {
+        overlay = false,
+        menu_state = 1
+    }
+}
+
+local menu = {
+    [1] = { text = "Player 1"; skip = true };
+    [2] = { text = "Meter"; skip = false; state = 1; max_state = 3; options = {
+        [1] = {text = " Normal >";  callback = noop };
+        [2] = {text = "< Refill >";  callback = noop };
+        [3] = {text = "< Infinate";  callback = noop }
+    }};
+    [3] = { text = "Player 2"; skip = true };
+    [4] = { text = "Health"; skip = false; state = 1; max_state = 3; options = {
+        [1] = {text = " Normal >";  callback = noop };
+        [2] = {text = "< Refill >";  callback = noop };
+        [3] = {text = "< Infinate";  callback = noop }
+    }};
+    [5] = { text = "Meter"; skip = false; state = 1; max_state = 3; options = {
+        [1] = {text = " Normal >";  callback = noop };
+        [2] = {text = "< Refill >";  callback = noop };
+        [3] = {text = "< Infinate";  callback = noop }
+    }};
+    [6] = { text = "State"; skip = false; state = 1; max_state = 3; options = {
+        [1] = {text = " Standing >";  callback = noop };
+        [2] = {text = "< Crouching >";  callback = noop };
+        [3] = {text = "< Jumping";  callback = noop }
+    }};
+    [7] = { text = "Blocking"; skip = false; state = 1; max_state = 3; options = {
+        [1] = {text = " None >";  callback = noop };
+        [2] = {text = "< Auto >";  callback = noop };
+        [3] = {text = "< Follow Up";  callback = noop }
+    }};
+    [8] = { text = "Extras"; skip = true };
+    [9] = { text = "Time"; skip = false; state = 1; max_state = 2; options = {
+        [1] = { text = " Normal >";  callback = noop };
+        [2] = { text = "< Infinate";  callback = noop }
+    }};
+    [10] = { text = "Hitboxes"; skip = false; state = 1; max_state = 2; options = {
+        [1] = { text = " Off >";  callback = noop };
+        [2] = { text = "< On";  callback = noop }
+    }};
+}
+
+function run_menu_callbacks()
+    for key, value in ipairs(menu) do
+        if value["skip"] == false then
+            value["options"][value.state]["callback"]()
+        end
+    end
+end
+
+function check_timers()
+    ref_time = 50
+    if state.timers.overlay >= ref_time then
+        state.flags.overlay = not state.flags.overlay
+        state.timers.overlay = 0
+    end
+end
+
+function noop()
+    return 0
+end
+
+function table_has_key(table, key)
+    if table[key] ~= nil then
+        return true
+    else
+        return false
+    end
+end
+
+function overlay()
+    ref_time = 5
+    inputs = joypad.get()
+    line_space_amount = 10
+    line_space = 0
+    
+    for key, value in ipairs(menu) do
+            if  table_has_key(value, "options") == true then
+                menu_text = value["text"] .. " " .. value["options"][value.state]["text"]
+            else
+                menu_text = value["text"]
+            end
+            
+            if key == state.flags.menu_state and value["skip"] == false then
+                gui.drawText(0, line_space, ">" .. menu_text, "white", "Black")
+                
+                if  table_has_key(value, "state") == true and  table_has_key(value, "max_state") == true then
+                    if inputs["P1 Right"] == true and state.timers.sub_menu_delay >= ref_time then
+                        value.state = value.state + 1
+                        state.timers.sub_menu_delay = 0
+                    end
+                    
+                    if inputs["P1 Left"] == true and state.timers.sub_menu_delay >= ref_time then
+                        value.state = value.state - 1
+                        state.timers.sub_menu_delay = 0
+                    end
+                    
+                    if inputs["P1 Left"] == true or inputs["P1 Right"] == true then
+                        state.timers.sub_menu_delay = state.timers.sub_menu_delay + 1
+                    end
+                    
+                    if value.state > value.max_state then
+                        value.state = value.max_state
+                    end
+                    
+                    if value.state < 1 then
+                        value.state = 1
+                    end
+                end
+                
+                value["options"][value.state]["callback"]()
+                
+            elseif key == state.flags.menu_state and value["skip"] == true then
+                gui.drawText(0, line_space, "-" .. menu_text, "white", "Black")
+            else
+                gui.drawText(0, line_space, " " .. menu_text, "white", "Black")
+            end
+            
+            line_space = line_space + line_space_amount
+        end
+        
+        if inputs["P1 Down"] == true or inputs["P1 Up"] == true then
+            state.timers.menu_delay = state.timers.menu_delay + 1
+        end
+        
+        if inputs["P1 Down"] == true and state.timers.menu_delay >= ref_time then
+            state.flags.menu_state = state.flags.menu_state + 1
+            state.timers.menu_delay = 0
+        end
+        
+        if inputs["P1 Up"] == true and state.timers.menu_delay >= ref_time then
+            state.flags.menu_state = state.flags.menu_state - 1
+            state.timers.menu_delay = 0
+        end
+        
+        if state.flags.menu_state < 1 then
+            state.flags.menu_state = 1
+        end
+        
+        if state.flags.menu_state > #menu then
+            state.flags.menu_state = #menu
+        end
+end
 
 while true do
     local inputs = joypad.get()
 
     if inputs["P1 Start"] == true and inputs["P1 Select"] == true then
-        state.timers.main_overlay = state.timers.main_overlay + 1
+        state.timers.overlay = state.timers.overlay + 1
     end
 
-    utils.check_timers()
+    check_timers()
 
-    if state.flags.main_overlay == true then
-        menu.overlay()
+    if state.flags.overlay == true then
+        overlay()
     end
-    
-    menu.run_callbacks()
+
+    run_menu_callbacks()
     emu.frameadvance()
+    gui.clearGraphics()
 end
