@@ -41,12 +41,14 @@ local state = {
     }
 }
 
-function one_byte_set_to_max(table)
-    function f()
+function local one_byte_set_to_max(table)
+    function local f()
         memory.writebyte(table.address, table.max)
     end
     return f
 end
+
+
 
 local menu = {
     --[1] = { text = "Player 1"; skip = true };
@@ -55,17 +57,12 @@ local menu = {
     --    [2] = {text = "< Refill >";  callback = noop };
     --    [3] = {text = "< Infinate";  callback = noop }
     --}};
-    --[3] = { text = "Player 2"; skip = true };
-    --[4] = { text = "Health"; skip = false; state = 1; max_state = 3; options = {
-    --    [1] = {text = " Normal >";  callback = noop };
-    --    [2] = {text = "< Refill >";  callback = noop };
-    --    [3] = {text = "< Infinate";  callback = noop }
-    --}};
-    --[5] = { text = "Meter"; skip = false; state = 1; max_state = 3; options = {
-    --    [1] = {text = " Normal >";  callback = noop };
-    --    [2] = {text = "< Refill >";  callback = noop };
-    --    [3] = {text = "< Infinate";  callback = noop }
-    --}};
+    [1] = { text = "Player 2"; skip = true };
+    [2] = { text = "Health"; skip = false; state = 1; max_state = 3; options = {
+        [1] = {text = " Normal >";  callback = noop };
+        [2] = {text = "< Refill >";  callback = noop };
+        [3] = {text = "< Infinate";  callback = one_byte_set_to_max({address = state.player_2.health.address; max = state.player_2.health.max}) }
+    }};
     --[6] = { text = "State"; skip = false; state = 1; max_state = 3; options = {
     --    [1] = {text = " Standing >";  callback = noop };
     --    [2] = {text = "< Crouching >";  callback = noop };
@@ -76,8 +73,8 @@ local menu = {
     --    [2] = {text = "< Auto >";  callback = noop };
     --    [3] = {text = "< Follow Up";  callback = noop }
     --}};
-    [1] = { text = "Extras"; skip = true };
-    [2] = { text = "Time"; skip = false; state = 1; max_state = 2; options = {
+    [3] = { text = "Extras"; skip = true };
+    [4] = { text = "Time"; skip = false; state = 1; max_state = 2; options = {
         [1] = { text = " Normal >";  callback = noop };
         [2] = { text = "< Infinate";  callback = one_byte_set_to_max({address = state.time.address; max = state.time.max}) }
     }};
@@ -87,7 +84,7 @@ local menu = {
     --}};
 }
 
-function run_menu_callbacks()
+function local run_menu_callbacks()
     for key, value in ipairs(menu) do
         if value["skip"] == false then
             value["options"][value.state]["callback"]()
@@ -95,7 +92,7 @@ function run_menu_callbacks()
     end
 end
 
-function check_timers()
+function local check_timers()
     ref_time = 50
     if state.timers.overlay >= ref_time then
         state.flags.overlay = not state.flags.overlay
@@ -103,11 +100,11 @@ function check_timers()
     end
 end
 
-function noop()
+function local noop()
     return 0
 end
 
-function table_has_key(table, key)
+function local table_has_key(table, key)
     if table[key] ~= nil then
         return true
     else
@@ -115,7 +112,7 @@ function table_has_key(table, key)
     end
 end
 
-function overlay()
+function local overlay()
     ref_time = 5
     inputs = joypad.get()
     line_space_amount = 10
