@@ -51,30 +51,26 @@ end
 
 
 local menu = {
-    --[1] = { text = "Player 1"; skip = true };
-    --[2] = { text = "Meter"; skip = false; state = 1; max_state = 3; options = {
-    --    [1] = {text = " Normal >";  callback = noop };
-    --    [2] = {text = "< Refill >";  callback = noop };
-    --    [3] = {text = "< Infinate";  callback = noop }
-    --}};
-    [1] = { text = "Player 2"; skip = true };
+    [1] = { text = "Player 1"; skip = true };
     [2] = { text = "Health"; skip = false; state = 1; max_state = 3; options = {
         [1] = {text = " Normal >";  callback = noop };
-        [2] = {text = "< Refill >";  callback = noop };
-        [3] = {text = "< Infinate";  callback = one_byte_set_to_max({address = state.player_2.health.address; max = state.player_2.health.max}) }
+        [2] = {text = "< Infinate";  callback = one_byte_set_to_max({address = state.player_1.health.address; max = state.player_2.health.max}) }
     }};
-    --[6] = { text = "State"; skip = false; state = 1; max_state = 3; options = {
-    --    [1] = {text = " Standing >";  callback = noop };
-    --    [2] = {text = "< Crouching >";  callback = noop };
-    --    [3] = {text = "< Jumping";  callback = noop }
-    --}};
-    --[7] = { text = "Blocking"; skip = false; state = 1; max_state = 3; options = {
-    --    [1] = {text = " None >";  callback = noop };
-    --    [2] = {text = "< Auto >";  callback = noop };
-    --    [3] = {text = "< Follow Up";  callback = noop }
-    --}};
-    [3] = { text = "Extras"; skip = true };
-    [4] = { text = "Time"; skip = false; state = 1; max_state = 2; options = {
+    [3] = { text = "Meter"; skip = false; state = 1; max_state = 3; options = {
+        [1] = {text = " Normal >";  callback = noop };
+        [2] = {text = "< Infinate";  callback = noop }
+    }};
+    [4] = { text = "Player 2"; skip = true };
+    [5] = { text = "Health"; skip = false; state = 1; max_state = 3; options = {
+        [1] = {text = " Normal >";  callback = noop };
+        [2] = {text = "< Infinate";  callback = one_byte_set_to_max({address = state.player_2.health.address; max = state.player_2.health.max}) }
+    }};
+    [6] = { text = "Meter"; skip = false; state = 1; max_state = 3; options = {
+        [1] = {text = " Normal >";  callback = noop };
+        [2] = {text = "< Infinate";  callback = noop }
+    }};
+    [7] = { text = "Extras"; skip = true };
+    [8] = { text = "Time"; skip = false; state = 1; max_state = 2; options = {
         [1] = { text = " Normal >";  callback = noop };
         [2] = { text = "< Infinate";  callback = one_byte_set_to_max({address = state.time.address; max = state.time.max}) }
     }};
