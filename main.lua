@@ -48,26 +48,31 @@ function local one_byte_set_to_max(table)
     return f
 end
 
-
+function local two_byte_set_to_max(table)
+    function local f()
+        memory.write_u16_le(table.address, table.max)
+    end
+    return f
+end
 
 local menu = {
     [1] = { text = "Player 1"; skip = true };
-    [2] = { text = "Health"; skip = false; state = 1; max_state = 3; options = {
+    [2] = { text = "Health"; skip = false; state = 1; max_state = 2; options = {
         [1] = {text = " Normal >";  callback = noop };
-        [2] = {text = "< Infinate";  callback = one_byte_set_to_max({address = state.player_1.health.address; max = state.player_2.health.max}) }
+        [2] = {text = "< Infinate";  callback = one_byte_set_to_max({address = state.player_1.health.address; max = state.player_1.health.max}) }
     }};
-    [3] = { text = "Meter"; skip = false; state = 1; max_state = 3; options = {
+    [3] = { text = "Meter"; skip = false; state = 1; max_state = 2; options = {
         [1] = {text = " Normal >";  callback = noop };
-        [2] = {text = "< Infinate";  callback = noop }
+        [2] = {text = "< Infinate";  callback = two_byte_set_to_max({address = state.player_1.meter.address; max = state.player_1.meter.max}) }
     }};
     [4] = { text = "Player 2"; skip = true };
-    [5] = { text = "Health"; skip = false; state = 1; max_state = 3; options = {
+    [5] = { text = "Health"; skip = false; state = 1; max_state = 2; options = {
         [1] = {text = " Normal >";  callback = noop };
         [2] = {text = "< Infinate";  callback = one_byte_set_to_max({address = state.player_2.health.address; max = state.player_2.health.max}) }
     }};
-    [6] = { text = "Meter"; skip = false; state = 1; max_state = 3; options = {
+    [6] = { text = "Meter"; skip = false; state = 1; max_state = 2; options = {
         [1] = {text = " Normal >";  callback = noop };
-        [2] = {text = "< Infinate";  callback = noop }
+        [2] = {text = "< Infinate";  callback = two_byte_set_to_max({address = state.player_2.meter.address; max = state.player_2.meter.max}) }
     }};
     [7] = { text = "Extras"; skip = true };
     [8] = { text = "Time"; skip = false; state = 1; max_state = 2; options = {
@@ -148,7 +153,7 @@ function local overlay()
                     end
                 end
                 
-                value["options"][value.state]["callback"]()
+                --value["options"][value.state]["callback"]()
                 
             elseif key == state.flags.menu_state and value["skip"] == true then
                 gui.drawText(0, line_space, "-" .. menu_text, "white", "Black")
