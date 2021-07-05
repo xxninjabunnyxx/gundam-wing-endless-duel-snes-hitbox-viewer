@@ -41,15 +41,19 @@ local state = {
     }
 }
 
-function local one_byte_set_to_max(table)
-    function local f()
+local function noop()
+    return 0
+end
+
+local function one_byte_set_to_max(table)
+    local function f()
         memory.writebyte(table.address, table.max)
     end
     return f
 end
 
-function local two_byte_set_to_max(table)
-    function local f()
+local function two_byte_set_to_max(table)
+    local function f()
         memory.write_u16_le(table.address, table.max)
     end
     return f
@@ -85,7 +89,7 @@ local menu = {
     --}};
 }
 
-function local run_menu_callbacks()
+local function run_menu_callbacks()
     for key, value in ipairs(menu) do
         if value["skip"] == false then
             value["options"][value.state]["callback"]()
@@ -93,7 +97,7 @@ function local run_menu_callbacks()
     end
 end
 
-function local check_timers()
+local function check_timers()
     ref_time = 50
     if state.timers.overlay >= ref_time then
         state.flags.overlay = not state.flags.overlay
@@ -101,11 +105,7 @@ function local check_timers()
     end
 end
 
-function local noop()
-    return 0
-end
-
-function local table_has_key(table, key)
+local function table_has_key(table, key)
     if table[key] ~= nil then
         return true
     else
@@ -113,7 +113,7 @@ function local table_has_key(table, key)
     end
 end
 
-function local overlay()
+local function overlay()
     ref_time = 5
     inputs = joypad.get()
     line_space_amount = 10
@@ -153,7 +153,7 @@ function local overlay()
                     end
                 end
                 
-                --value["options"][value.state]["callback"]()
+                value["options"][value.state]["callback"]()
                 
             elseif key == state.flags.menu_state and value["skip"] == true then
                 gui.drawText(0, line_space, "-" .. menu_text, "white", "Black")
