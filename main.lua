@@ -15,6 +15,21 @@ local state = {
         meter = {
             address = 0x001B80,
             max = 300
+        },
+
+        position = { x = 0x001101, y = 0x001181},
+
+        hitbox = {
+            [1] = { x_1 = 0x001800 , x_2 = 0x001802, y_1 = 0x001880, y_2 = 0x001882 }
+        },
+
+        active_hitbox = {
+            [1] = { x_1 = '', x_2 = '', y_1 = '', y_2 = ''}
+        },
+
+        facing = {
+            address = 0x001383,
+            left = 46,
         }
     },
     
@@ -23,9 +38,23 @@ local state = {
             address = 0x001B75,
             max = 112
         },
+
         meter = {
             address = 0x001B84,
             max = 300
+        },
+
+        hitbox = {
+            [1] = { x_1 = '', x_2 = '', y_1 = '', y_2 = ''}
+        },
+        
+        active_hitbox = {
+            [1] = { x_1 = '', x_2 = '', y_1 = '', y_2 = ''}
+        },
+
+        facing = {
+            address = 0x001383,
+            left = 48,
         }
     },
 
@@ -38,11 +67,31 @@ local state = {
     flags = {
         overlay = false,
         menu_state = 1
+    },
+
+    camera = {
+        x = 0x0620,
+        y = 0x0622
+    },
+
+    color = {
+        hitbox = {
+            border = 0xFF0000FF,
+            fill = 0x400000FF
+        }
     }
 }
 
 local function noop()
     return 0
+end
+
+local function facing(table)
+    if (memory.read_s16_le(table.address) == table) then
+        return 1
+    else
+        return -1
+    end
 end
 
 local function one_byte_set_to_max(table)
@@ -57,6 +106,25 @@ local function two_byte_set_to_max(table)
         memory.write_u16_le(table.address, table.max)
     end
     return f
+end
+
+
+local function draw_boxes(table)
+    player_facing = facing({ address=table.player.facing.address, left = table.player.facing.left })
+    for key, value in ipairs(table.player[table.box_type]) do
+    gui.drawBox(
+        (memory.read_s16_le(table.player.position.x) - memory.read_s16_le(state.camera.x)) + (memory.read_s16_le(table.player[table.box_type][key].x_1) * player_facing),
+        (memory.read_s16_le(table.player.position.y) - memory.read_s16_le(state.camera.y)) + memory.read_s16_le(table.player[table.box_type][key].y_1),
+        (memory.read_s16_le(table.player.position.x) - memory.read_s16_le(state.camera.x)) + ((memory.read_s16_le(table.player[table.box_type][key].x_1) + memory.read_s16_le(table.player[table.box_type][key].x_2)) * player_facing),
+        (memory.read_s16_le(table.player.position.y) - memory.read_s16_le(state.camera.y)) + (memory.read_s16_le(table.player[table.box_type][key].y_1) + memory.read_s16_le(table.player[table.box_type][key].y_2)),
+        table.color.border,
+        table.color.fill
+    )
+    end
+end
+    
+local function draw_hitboxes()
+    draw_boxes({player = state.player_1, color = state.color.hitbox, box_type = "hitbox"})
 end
 
 local menu = {
@@ -83,10 +151,10 @@ local menu = {
         [1] = { text = " Normal >";  callback = noop };
         [2] = { text = "< Infinate";  callback = one_byte_set_to_max({address = state.time.address; max = state.time.max}) }
     }};
-    --[10] = { text = "Hitboxes"; skip = false; state = 1; max_state = 2; options = {
-    --    [1] = { text = " Off >";  callback = noop };
-    --    [2] = { text = "< On";  callback = noop }
-    --}};
+    [9] = { text = "Hitboxes"; skip = false; state = 1; max_state = 2; options = {
+        [1] = { text = " Off >";  callback = noop };
+        [2] = { text = "< On";  callback = draw_hitboxes }
+    }};
 }
 
 local function run_menu_callbacks()
@@ -201,6 +269,7 @@ while true do
     end
 
     run_menu_callbacks()
+
     emu.frameadvance()
     gui.clearGraphics()
 end
