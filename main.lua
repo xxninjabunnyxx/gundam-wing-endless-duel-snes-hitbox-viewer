@@ -17,20 +17,23 @@ local state = {
             max = 300
         },
 
-        position = { x = 0x001101, y = 0x001181},
+        position = { x = 0x001101, y = 0x001181 },
 
         hitbox = {
-            [1] = { x_1 = 0x001800 , x_2 = 0x001802, y_1 = 0x001880, y_2 = 0x001882 }
+            [1] = { x_1 = 0x001800, x_2 = 0x001802, y_1 = 0x001880, y_2 = 0x001882 },
+            [2] = { x_1 = 0x001BC0, x_2 = 0x001782, y_1 = 0x001BC2, y_2 = 0x001BC8 },
         },
-
+        
         active_hitbox = {
-            [1] = { x_1 = '', x_2 = '', y_1 = '', y_2 = ''}
+            [1] = { x_1 = 0x001900 , x_2 = 0x001902, y_1 = 0x001980, y_2 = 0x001982 },
         },
-
+        
         facing = {
-            address = 0x001383,
-            left = 46,
-        }
+            address = 0x001387,
+            bitwise_and = 0x74,
+        },
+        
+        attack_state_address = 0x001600,
     },
     
     player_2 = {
@@ -44,18 +47,23 @@ local state = {
             max = 300
         },
 
+        position = { x = 0x001105, y = 0x001185	},
+
         hitbox = {
-            [1] = { x_1 = '', x_2 = '', y_1 = '', y_2 = ''}
+            [1] = { x_1 = 0x001804, x_2 = 0x001806, y_1 = 0x001884, y_2 = 0x001886 },
+            [2] = { x_1 = 0x001BC4, x_2 = 0x001786, y_1 = 0x001BC6, y_2 = 0x001BCC },
         },
-        
+
         active_hitbox = {
-            [1] = { x_1 = '', x_2 = '', y_1 = '', y_2 = ''}
+            [1] = { x_1 = 0x001904 , x_2 = 0x001906, y_1 = 0x001984, y_2 = 0x001986 },
         },
 
         facing = {
             address = 0x001383,
-            left = 48,
-        }
+            bitwise_and = 0x74,
+        },
+
+        attack_state_address = 0x001604
     },
 
     timers = {
@@ -78,8 +86,19 @@ local state = {
         hitbox = {
             border = 0xFF0000FF,
             fill = 0x400000FF
+        },
+
+        active_hitbox = {
+            border = 0xFFFF0000,
+            fill = 0x40FF0000
+        },
+
+        invisible = {
+            border = 0x00000000,
+            fill = 0x00000000
         }
-    }
+
+    },
 }
 
 local function noop()
@@ -87,7 +106,7 @@ local function noop()
 end
 
 local function facing(table)
-    if (memory.read_s16_le(table.address) == table) then
+    if bit.band(memory.read_u8(table.address), table.bitwise_and) == table.bitwise_and then
         return 1
     else
         return -1
@@ -109,22 +128,59 @@ local function two_byte_set_to_max(table)
 end
 
 
-local function draw_boxes(table)
-    player_facing = facing({ address=table.player.facing.address, left = table.player.facing.left })
-    for key, value in ipairs(table.player[table.box_type]) do
-    gui.drawBox(
-        (memory.read_s16_le(table.player.position.x) - memory.read_s16_le(state.camera.x)) + (memory.read_s16_le(table.player[table.box_type][key].x_1) * player_facing),
-        (memory.read_s16_le(table.player.position.y) - memory.read_s16_le(state.camera.y)) + memory.read_s16_le(table.player[table.box_type][key].y_1),
-        (memory.read_s16_le(table.player.position.x) - memory.read_s16_le(state.camera.x)) + ((memory.read_s16_le(table.player[table.box_type][key].x_1) + memory.read_s16_le(table.player[table.box_type][key].x_2)) * player_facing),
-        (memory.read_s16_le(table.player.position.y) - memory.read_s16_le(state.camera.y)) + (memory.read_s16_le(table.player[table.box_type][key].y_1) + memory.read_s16_le(table.player[table.box_type][key].y_2)),
-        table.color.border,
-        table.color.fill
-    )
+local function draw_hitboxes(table)
+    for key, value in ipairs(table.player.hitbox) do
+        local player_facing = facing({ address=table.player.facing.address, bitwise_and = table.player.facing.bitwise_and })
+
+        local border = state.color.hitbox.border
+        local fill = state.color.hitbox.fill
+
+        if memory.read_s16_le(table.player.hitbox[key].x_2) == -1 then
+            border = state.color.invisible.border
+            fill = state.color.invisible.fill
+        end
+
+        gui.drawBox(
+            (memory.read_s16_le(table.player.position.x) - memory.read_s16_le(state.camera.x)) + (memory.read_s16_le(table.player.hitbox[key].x_1) * player_facing),
+            (memory.read_s16_le(table.player.position.y) - memory.read_s16_le(state.camera.y)) + memory.read_s16_le(table.player.hitbox[key].y_1),
+            (memory.read_s16_le(table.player.position.x) - memory.read_s16_le(state.camera.x)) + ((memory.read_s16_le(table.player.hitbox[key].x_1) + memory.read_s16_le(table.player.hitbox[key].x_2)) * player_facing),
+            (memory.read_s16_le(table.player.position.y) - memory.read_s16_le(state.camera.y)) + (memory.read_s16_le(table.player.hitbox[key].y_1) + memory.read_s16_le(table.player.hitbox[key].y_2)),
+            border,
+            fill
+        )
     end
 end
-    
-local function draw_hitboxes()
-    draw_boxes({player = state.player_1, color = state.color.hitbox, box_type = "hitbox"})
+
+local function draw_active_hitboxes(table)
+    for key, value in ipairs(table.player.active_hitbox) do
+
+        local player_facing = facing({ address=table.player.facing.address, bitwise_and = table.player.facing.bitwise_and })
+        local player_attack_state = memory.read_u8(table.player.attack_state_address)
+
+        local border = state.color.invisible.border
+        local fill = state.color.invisible.fill
+
+        if player_attack_state > 0 then
+            border = state.color.active_hitbox.border
+            fill = state.color.active_hitbox.fill
+        end
+        
+        gui.drawBox(
+            memory.read_s16_le(table.player.position.x) - memory.read_s16_le(state.camera.x) + (memory.read_s16_le(table.player.active_hitbox[key].x_1) * player_facing),
+            (memory.read_s16_le(table.player.position.y) - memory.read_s16_le(state.camera.y)) + memory.read_s16_le(table.player.active_hitbox[key].y_1),
+            (memory.read_s16_le(table.player.position.x) - memory.read_s16_le(state.camera.x)) + ((memory.read_s16_le(table.player.active_hitbox[key].x_1) + memory.read_s16_le(table.player.active_hitbox[key].x_2)) * player_facing),
+            (memory.read_s16_le(table.player.position.y) - memory.read_s16_le(state.camera.y)) + (memory.read_s16_le(table.player.active_hitbox[key].y_1) + memory.read_s16_le(table.player.active_hitbox[key].y_2)),
+            border,
+            fill
+        )
+    end
+end
+
+local function draw_boxes()
+    draw_hitboxes({player = state.player_1})
+    draw_hitboxes({player = state.player_2})
+    draw_active_hitboxes({player = state.player_1})
+    draw_active_hitboxes({player = state.player_2})
 end
 
 local menu = {
@@ -153,7 +209,7 @@ local menu = {
     }};
     [9] = { text = "Hitboxes"; skip = false; state = 1; max_state = 2; options = {
         [1] = { text = " Off >";  callback = noop };
-        [2] = { text = "< On";  callback = draw_hitboxes }
+        [2] = { text = "< On";  callback = draw_boxes }
     }};
 }
 
