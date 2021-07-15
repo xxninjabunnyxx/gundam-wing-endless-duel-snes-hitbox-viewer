@@ -54,9 +54,30 @@ local state = {
             [2] = 0x001048,
             [3] = 0x001050,
             [4] = 0x001058,
-        }
+        },
+
+        vulcan_hitbox = {
+            [1] = { x_1 = 0x001920, x_2 = 0x001922, y_1 = 0x0019A0, y_2 = 0x0019A2 },
+            [2] = { x_1 = 0x001928, x_2 = 0x00192A, y_1 = 0x0019A8, y_2 = 0x0019AA },
+            [3] = { x_1 = 0x001930, x_2 = 0x001932, y_1 = 0x0019B0, y_2 = 0x0019B2 },
+            [4] = { x_1 = 0x001938, x_2 = 0x00193A, y_1 = 0x0019B8, y_2 = 0x0019BA },
+        },
+
+        vulcan_position = {
+            [1] = { x = 0x001121, y = 0x0011A1 },
+            [2] = { x = 0x001129, y = 0x0011A9 },
+            [3] = { x = 0x001131, y = 0x0011B1 },
+            [4] = { x = 0x001139, y = 0x0011B9 },
+        },
+
+        vulcan_state_address = {
+            [1] = 0x001020,
+            [2] = 0x001028,
+            [3] = 0x001030,
+            [4] = 0x001038,
+        },
     },
-    
+
     player_2 = {
         health = {
             address = 0x001B75,
@@ -105,7 +126,28 @@ local state = {
             [2] = 0x00104C,
             [3] = 0x001054,
             [4] = 0x00105C,
-        }
+        },
+
+        vulcan_hitbox = {
+            [1] = { x_1 = 0x001924, x_2 = 0x001926, y_1 = 0x0019A4, y_2 = 0x0019A6 },
+            [2] = { x_1 = 0x00192C, x_2 = 0x00192E, y_1 = 0x0019AC, y_2 = 0x0019AE },
+            [3] = { x_1 = 0x001934, x_2 = 0x001936, y_1 = 0x0019B4, y_2 = 0x0019B6 },
+            [4] = { x_1 = 0x00193C, x_2 = 0x00193E, y_1 = 0x0019BC, y_2 = 0x0019BE },
+        },
+
+        vulcan_position = {
+            [1] = { x = 0x001125, y = 0x0011A5 },
+            [2] = { x = 0x00112D, y = 0x0011AD },
+            [3] = { x = 0x001135, y = 0x0011B5 },
+            [4] = { x = 0x00113D, y = 0x0011BD },
+        },
+
+        vulcan_state_address = {
+            [1] = 0x001024,
+            [2] = 0x00102C,
+            [3] = 0x001034,
+            [4] = 0x00103C,
+        },
     },
 
     timers = {
@@ -243,6 +285,32 @@ local function draw_projectile_hitboxes(table)
     end
 end
 
+local function draw_vulcan_hitboxes(table)
+    for key, value in ipairs(table.player.vulcan_hitbox) do
+
+        
+        local player_facing = facing({ address=table.player.facing.address, bitwise_and = table.player.facing.bitwise_and })
+        local player_vulcan_state = memory.read_u8(table.player.vulcan_state_address[key])
+
+        local border = state.color.invisible.border
+        local fill = state.color.invisible.fill
+
+        if player_vulcan_state > 0 then
+            border = state.color.active_hitbox.border
+            fill = state.color.active_hitbox.fill
+        end
+       
+        gui.drawBox(
+            memory.read_s16_le(table.player.vulcan_position[key].x) - memory.read_s16_le(state.camera.x) + (memory.read_s16_le(table.player.vulcan_hitbox[key].x_1) * player_facing),
+            (memory.read_s16_le(table.player.vulcan_position[key].y) - memory.read_s16_le(state.camera.y)) + memory.read_s16_le(table.player.vulcan_hitbox[key].y_1),
+            (memory.read_s16_le(table.player.vulcan_position[key].x) - memory.read_s16_le(state.camera.x)) + ((memory.read_s16_le(table.player.vulcan_hitbox[key].x_1) + memory.read_s16_le(table.player.vulcan_hitbox[key].x_2)) * player_facing),
+            (memory.read_s16_le(table.player.vulcan_position[key].y) - memory.read_s16_le(state.camera.y)) + (memory.read_s16_le(table.player.vulcan_hitbox[key].y_1) + memory.read_s16_le(table.player.vulcan_hitbox[key].y_2)),
+            border,
+            fill
+        )
+    end
+end
+
 local function draw_boxes()
     draw_hitboxes({player = state.player_1})
     draw_hitboxes({player = state.player_2})
@@ -250,6 +318,8 @@ local function draw_boxes()
     draw_active_hitboxes({player = state.player_2})
     draw_projectile_hitboxes({player = state.player_1})
     draw_projectile_hitboxes({player = state.player_2})
+    draw_vulcan_hitboxes({player = state.player_1})
+    draw_vulcan_hitboxes({player = state.player_2})
 end
 
 local menu = {
