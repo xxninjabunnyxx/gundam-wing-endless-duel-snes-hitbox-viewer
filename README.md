@@ -1,4 +1,4 @@
-# Gundam Wing Endless Dual Training Mode
+# Gundam Wing Endless Dual Hitbox Viewer
 Bizhawk training mode for Gundam Wing: Endless Dual
 
 To enter and exit the menu hold start and select.
@@ -28,3 +28,7 @@ To enter and exit the menu hold start and select.
 - **Time**
     - **Normal**: Set the time to countdown normaly.
     - **Infinite**: Set the time to never countdown.
+  
+- **Hitboxes**
+    - **Off**: Turn off Hitboxes.
+    - **On**: Turn on Hitboxes.
