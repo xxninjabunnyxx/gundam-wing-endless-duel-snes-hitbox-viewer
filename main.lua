@@ -27,6 +27,20 @@ local state = {
         active_hitbox = {
             [1] = { x_1 = 0x001900 , x_2 = 0x001902, y_1 = 0x001980, y_2 = 0x001982 },
         },
+
+        projectile_hitbox = {
+            [1] = { x_1 = 0x001940, x_2 = 0x001942, y_1 = 0x0019C0, y_2 = 0x0019C2 },
+            [2] = { x_1 = 0x001948, x_2 = 0x00194A, y_1 = 0x0019C8, y_2 = 0x0019CA },
+            [3] = { x_1 = 0x001950, x_2 = 0x001952, y_1 = 0x0019D0, y_2 = 0x0019D2 },
+            [4] = { x_1 = 0x001958, x_2 = 0x00195A, y_1 = 0x0019D8, y_2 = 0x0019DA },
+        },
+
+        projectile_position = {
+            [1] = { x = 0x001141, y = 0x0011C1 },
+            [2] = { x = 0x001149, y = 0x0011C9 },
+            [3] = { x = 0x001151, y = 0x0011D1 },
+            [4] = { x = 0x001159, y = 0x0011D9 },
+        },
         
         facing = {
             address = 0x001387,
@@ -34,6 +48,13 @@ local state = {
         },
         
         attack_state_address = 0x001600,
+
+        projectile_state_address = {
+            [1] = 0x001040,
+            [2] = 0x001048,
+            [3] = 0x001050,
+            [4] = 0x001058,
+        }
     },
     
     player_2 = {
@@ -58,12 +79,33 @@ local state = {
             [1] = { x_1 = 0x001904 , x_2 = 0x001906, y_1 = 0x001984, y_2 = 0x001986 },
         },
 
+        projectile_hitbox = {
+            [1] = { x_1 = 0x001944, x_2 = 0x001946, y_1 = 0x0019C4, y_2 = 0x0019C6 },
+            [2] = { x_1 = 0x00194C, x_2 = 0x00194E, y_1 = 0x0019CC, y_2 = 0x0019CE },
+            [3] = { x_1 = 0x001954, x_2 = 0x001956, y_1 = 0x0019D4, y_2 = 0x0019D6 },
+            [4] = { x_1 = 0x00195C, x_2 = 0x00195E, y_1 = 0x0019DC, y_2 = 0x0019DE },
+        },
+
+        projectile_position = {
+            [1] = { x = 0x001145, y = 0x0011C5 },
+            [2] = { x = 0x00114D, y = 0x0011CD },
+            [3] = { x = 0x001155, y = 0x0011D5 },
+            [4] = { x = 0x00115D, y = 0x0011DD },
+        },
+
         facing = {
             address = 0x001383,
             bitwise_and = 0x74,
         },
 
-        attack_state_address = 0x001604
+        attack_state_address = 0x001604,
+
+        projectile_state_address = {
+            [1] = 0x001044,
+            [2] = 0x00104C,
+            [3] = 0x001054,
+            [4] = 0x00105C,
+        }
     },
 
     timers = {
@@ -176,11 +218,38 @@ local function draw_active_hitboxes(table)
     end
 end
 
+local function draw_projectile_hitboxes(table)
+    for key, value in ipairs(table.player.projectile_hitbox) do
+
+        local player_facing = facing({ address=table.player.facing.address, bitwise_and = table.player.facing.bitwise_and })
+        local player_projectile_state = memory.read_u8(table.player.projectile_state_address[key])
+
+        local border = state.color.invisible.border
+        local fill = state.color.invisible.fill
+
+        if player_projectile_state > 0 then
+            border = state.color.active_hitbox.border
+            fill = state.color.active_hitbox.fill
+        end
+        
+        gui.drawBox(
+            memory.read_s16_le(table.player.projectile_position[key].x) - memory.read_s16_le(state.camera.x) + (memory.read_s16_le(table.player.projectile_hitbox[key].x_1) * player_facing),
+            (memory.read_s16_le(table.player.projectile_position[key].y) - memory.read_s16_le(state.camera.y)) + memory.read_s16_le(table.player.projectile_hitbox[key].y_1),
+            (memory.read_s16_le(table.player.projectile_position[key].x) - memory.read_s16_le(state.camera.x)) + ((memory.read_s16_le(table.player.projectile_hitbox[key].x_1) + memory.read_s16_le(table.player.projectile_hitbox[key].x_2)) * player_facing),
+            (memory.read_s16_le(table.player.projectile_position[key].y) - memory.read_s16_le(state.camera.y)) + (memory.read_s16_le(table.player.projectile_hitbox[key].y_1) + memory.read_s16_le(table.player.projectile_hitbox[key].y_2)),
+            border,
+            fill
+        )
+    end
+end
+
 local function draw_boxes()
     draw_hitboxes({player = state.player_1})
     draw_hitboxes({player = state.player_2})
     draw_active_hitboxes({player = state.player_1})
     draw_active_hitboxes({player = state.player_2})
+    draw_projectile_hitboxes({player = state.player_1})
+    draw_projectile_hitboxes({player = state.player_2})
 end
 
 local menu = {
