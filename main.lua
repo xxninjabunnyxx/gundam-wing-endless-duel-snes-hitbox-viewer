@@ -184,11 +184,12 @@ local state = {
 
     },
 }
-
+--refactor
 local function noop()
     return 0
 end
 
+--refactor
 local function facing(table)
     if bit.band(memory.read_u8(table.address), table.bitwise_and) == table.bitwise_and then
         return 1
@@ -197,6 +198,7 @@ local function facing(table)
     end
 end
 
+--refactor
 local function one_byte_set_to_max(table)
     local function f()
         memory.writebyte(table.address, table.max)
@@ -204,6 +206,7 @@ local function one_byte_set_to_max(table)
     return f
 end
 
+--refactor
 local function two_byte_set_to_max(table)
     local function f()
         memory.write_u16_le(table.address, table.max)
@@ -211,7 +214,7 @@ local function two_byte_set_to_max(table)
     return f
 end
 
-
+--refactor
 local function draw_hitboxes(table)
     for key, value in ipairs(table.player.hitbox) do
         local player_facing = facing({ address=table.player.facing.address, bitwise_and = table.player.facing.bitwise_and })
@@ -235,6 +238,7 @@ local function draw_hitboxes(table)
     end
 end
 
+--refactor
 local function draw_active_hitboxes(table)
     for key, value in ipairs(table.player.active_hitbox) do
 
@@ -260,6 +264,7 @@ local function draw_active_hitboxes(table)
     end
 end
 
+--refactor
 local function draw_projectile_hitboxes(table)
     for key, value in ipairs(table.player.projectile_hitbox) do
 
@@ -285,6 +290,7 @@ local function draw_projectile_hitboxes(table)
     end
 end
 
+--refactor
 local function draw_vulcan_hitboxes(table)
     for key, value in ipairs(table.player.vulcan_hitbox) do
 
@@ -311,6 +317,7 @@ local function draw_vulcan_hitboxes(table)
     end
 end
 
+--refactor
 local function draw_boxes()
     draw_hitboxes({player = state.player_1})
     draw_hitboxes({player = state.player_2})
@@ -322,6 +329,7 @@ local function draw_boxes()
     draw_vulcan_hitboxes({player = state.player_2})
 end
 
+--refactor
 local menu = {
     [1] = { text = "Player 1"; skip = true };
     [2] = { text = "Health"; skip = false; state = 1; max_state = 2; options = {
@@ -352,6 +360,7 @@ local menu = {
     }};
 }
 
+--refactor
 local function run_menu_callbacks()
     for key, value in ipairs(menu) do
         if value["skip"] == false then
@@ -360,6 +369,7 @@ local function run_menu_callbacks()
     end
 end
 
+--refactor
 local function check_timers()
     ref_time = 50
     if state.timers.overlay >= ref_time then
@@ -376,6 +386,7 @@ local function table_has_key(table, key)
     end
 end
 
+--refactor
 local function overlay()
     ref_time = 5
     inputs = joypad.get()
@@ -450,6 +461,7 @@ local function overlay()
         end
 end
 
+--refactor
 while true do
     local inputs = joypad.get()
 
