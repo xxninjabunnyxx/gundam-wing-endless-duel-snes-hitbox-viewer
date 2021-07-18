@@ -1,5 +1,5 @@
 # Gundam Wing Endless Dual Hitbox Viewer
-Bizhawk hitbot viewer for Gundam Wing: Endless Dual
+Bizhawk hitbox viewer for Gundam Wing: Endless Dual
 
 To enter and exit the menu hold start and select.
 
